@@ -1,5 +1,5 @@
-# Create a ready-to-use confirm.html and a short README for GitHub Pages
-confirm_html = """<!doctype html>
+# The previous state was reset unexpectedly; write the file again.
+content = """<!doctype html>
 <html>
 <head>
   <meta charset="utf-8" />
@@ -9,49 +9,39 @@ confirm_html = """<!doctype html>
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 32px; line-height: 1.4; }
     .box { max-width: 640px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; }
     h1 { margin-top: 0; }
-    .ok { color: #065f46; }
-    .err { color: #b91c1c; white-space: pre-wrap; }
-    .muted { color: #6b7280; font-size: 0.95rem; }
+    .ok { color: #065f46; } .err { color: #b91c1c; white-space: pre-wrap; } .muted { color: #6b7280; font-size: 0.95rem; }
   </style>
   <script type="module">
-    // ---- FILL THESE TWO LINES BEFORE UPLOADING ----
     const SUPABASE_URL  = "https://lfitjyhnivtegximnmke.supabase.co";
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmaXRqeWhuaXZ0ZWd4aW1ubWtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2ODUxNzIsImV4cCI6MjA3MDI2MTE3Mn0.0zWr5620Bn4gJl6FrUn3v8u4VG_Lc3GfUdDE327kc08";
-    // -----------------------------------------------
 
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    // Parse tokens from URL fragment (#access_token=...&refresh_token=...)
     const params = new URLSearchParams(location.hash.slice(1));
-    const access_token = params.get('access_token');
+    const access_token  = params.get('access_token');
     const refresh_token = params.get('refresh_token');
-    const type = params.get('type'); // e.g., signup, invite, magiclink
 
-    const $ = (s)=>document.querySelector(s);
+    const $ = s => document.querySelector(s);
 
-    async function run(){
-      const status = $('#status');
-      const detail = $('#detail');
+    (async () => {
+      const status = $('#status'), detail = $('#detail');
       try {
         if (!access_token || !refresh_token) {
-          status.innerHTML = "⚠️ Invalid or expired confirmation link.";
-          status.className = "err";
-          return;
+          status.textContent = "⚠️ Invalid or expired confirmation link.";
+          status.className = "err"; return;
         }
         const { error } = await supabase.auth.setSession({ access_token, refresh_token });
         if (error) throw error;
-        status.innerHTML = "✅ Email confirmed successfully.";
+        status.textContent = "✅ Email confirmed successfully.";
         status.className = "ok";
-        detail.innerHTML = "You can now open the desktop app and sign in with your email and password.";
+        detail.textContent = "You can now open the desktop app and sign in.";
       } catch (e) {
-        status.innerHTML = "❌ Confirmation failed";
+        status.textContent = "❌ Confirmation failed";
         status.className = "err";
         detail.textContent = String(e?.message || e);
       }
-    }
-    run();
+    })();
   </script>
 </head>
 <body>
@@ -63,43 +53,7 @@ confirm_html = """<!doctype html>
 </body>
 </html>
 """
-
-readme = """# GitHub Pages quick steps (60 seconds)
-
-1) **Edit `confirm.html`**: replace
-   - `https://YOUR-PROJECT-REF.supabase.co` with your Supabase **Project URL**
-   - `YOUR-ANON-PUBLIC-KEY` with your **anon** key (Settings → API).
-
-2) **Create a new GitHub repo** (public is fine), e.g. `qpcr-auth`.
-
-3) **Upload `confirm.html`** to the repo root and commit to the **main** branch.
-
-4) Open **Settings → Pages**:
-   - Source: **Deploy from a branch**
-   - Branch: **main / (root)**
-   - Save — wait ~30 seconds until you see the site URL.
-
-5) Your confirmation URL will be:
-   `https://YOUR-GITHUB-USERNAME.github.io/REPO-NAME/confirm.html`
-
-6) In Supabase → **Authentication → URL Configuration**:
-   - Set **Site URL** to that full `https://.../confirm.html`
-   - Save.
-
-7) Now use **Authentication → Users → Invite user**.
-   - The email link goes to your `confirm.html` page.
-   - After opening it, user can sign into your Electron app.
-"""
-
-import os, zipfile, io, textwrap
-base = "/mnt/data/confirm_page"
-os.makedirs(base, exist_ok=True)
-open(os.path.join(base, "confirm.html"), "w", encoding="utf-8").write(confirm_html)
-open(os.path.join(base, "README_GHPAGES.txt"), "w", encoding="utf-8").write(readme)
-
-zip_path = "/mnt/data/confirm_page.zip"
-with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
-    z.write(os.path.join(base, "confirm.html"), arcname="confirm.html")
-    z.write(os.path.join(base, "README_GHPAGES.txt"), arcname="README_GHPAGES.txt")
-
-zip_path
+path = "/mnt/data/confirm.html"
+with open(path, "w", encoding="utf-8") as f:
+    f.write(content)
+path
